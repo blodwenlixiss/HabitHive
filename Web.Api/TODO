@@ -1,0 +1,45 @@
+Login/Register/Logout/PasswordReset/EmailReset
+
+Create/Read/Update/Delete Tasks
+Create/Read/Update/Delete Habits
+
+Mark Tasks Completed
+Mark Habits Completed
+
+Task Categories & Priority
+
+Habit Streaks & Progress
+
+Dashboard / Analytics / Charts
+
+Search & Filter Tasks/Habits
+
+Notifications / Reminders
+
+Profile Settings / Change Password
+
+Habits/Tasks : {
+
+    A user cannot see or modify other users’ tasks/habits.
+    
+    A task cannot have a past due date when created (optional validation).
+    
+    A habit can only be marked once per day.
+    
+    Streaks increase if a habit is done consecutively; reset if skipped.
+   
+    };
+    
+Visual: {
+
+    Login/Register → Users access the system.
+    
+    Task List → See all tasks, filter by category/priority.
+    
+    Habit Tracker → See today’s habits, mark done.
+    
+    Dashboard → Visualize stats.
+    
+    Profile/Settings → Change password, email, etc.
+    
+    };
