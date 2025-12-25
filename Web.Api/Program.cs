@@ -1,3 +1,7 @@
+using Application.Mapper;
+using Domain.Entity;
+using Domain.Enum;
+using Microsoft.AspNetCore.Identity;
 using Web.Api.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,17 +9,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services
-    .AddCors(opt => opt.AddPolicy("All", corsPolicyBuilder =>
-    {
-        corsPolicyBuilder
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowAnyOrigin();
-    }))
-    .AddDbConfiguration(builder.Configuration);
+    .AddDbConfiguration(builder.Configuration)
+    .AddSwaggerGen();
+builder.Services.AddAuthConfiguration(builder.Configuration);
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+    foreach (Roles role in Enum.GetValues(typeof(Roles)))
+    {
+        var roleName = role.ToRoleName();
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new ApplicationRole { Name = roleName });
+        }
+    }
+}
 
 app.UseCors("All");
 app.UseSwagger();
@@ -23,8 +36,8 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

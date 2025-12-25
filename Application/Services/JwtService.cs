@@ -1,8 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Application.IServices;
 using Domain.Entity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,19 +13,35 @@ namespace Application.Services;
 public class JwtService : IJwtService
 {
     private readonly IConfiguration _configuration;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public JwtService(IConfiguration configuration) => _configuration = configuration;
-
-    public string GenerateAccessToken(ApplicationUser user)
+    public JwtService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
     {
-        var claim = GenerateClaims(user);
+        _userManager = userManager;
+        _configuration = configuration;
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomBytes = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomBytes);
+        }
+
+        return Convert.ToBase64String(randomBytes);
+    }
+
+    public async Task<string> GenerateAccessToken(ApplicationUser user)
+    {
+        var claim = await GenerateClaims(user);
         var signinCredentials = GetSigninCredentials();
         var token = CreateToken(claim, signinCredentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private IEnumerable<Claim> GenerateClaims(ApplicationUser user)
+    private async Task<IEnumerable<Claim>> GenerateClaims(ApplicationUser user)
     {
         var authClaims = new List<Claim>
         {
@@ -31,8 +49,17 @@ public class JwtService : IJwtService
             new Claim("firstName", user.FirstName!),
             new Claim("lastName", user.LastName!),
             new Claim("email", user.Email!),
+            new Claim("userName", user.UserName!),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        foreach (var role in roles)
+        {
+            authClaims.Add(new Claim("Role", role));
+        }
+
         return authClaims;
     }
 
@@ -55,4 +82,3 @@ public class JwtService : IJwtService
         return token;
     }
 }
-

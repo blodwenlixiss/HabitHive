@@ -2,7 +2,6 @@ using Domain.Entity;
 using Infrastructure.DbConfiguration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Task = Domain.Entity.Task;
 
 namespace Infrastructure.Data;
 
@@ -14,7 +13,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
     public DbSet<ApplicationRole> Roles { get; set; }
     public DbSet<ApplicationUser> Users { get; set; }
-    public DbSet<Task> Tasks { get; set; }
+    public DbSet<UserTask> Tasks { get; set; }
     public DbSet<Hobby> Hobbies { get; set; }
     public DbSet<HobbyCompletion> HobbyCompletions { get; set; }
     public DbSet<Notification> Notifications { get; set; }
@@ -24,6 +23,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
         base.OnModelCreating(builder);
 
+        
         builder.ApplyConfiguration(new ApplicationUserConfig());
         builder.ApplyConfiguration(new HobbyCompletionConfig());
         builder.ApplyConfiguration(new NotificationConfig());

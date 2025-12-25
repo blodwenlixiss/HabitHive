@@ -1,12 +1,12 @@
+using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Task = Domain.Entity.Task;
 
 namespace Infrastructure.DbConfiguration;
 
-public class TaskConfig : IEntityTypeConfiguration<Task>
+public class TaskConfig : IEntityTypeConfiguration<UserTask>
 {
-    public void Configure(EntityTypeBuilder<Task> builder)
+    public void Configure(EntityTypeBuilder<UserTask> builder)
     {
         builder.HasKey(t => t.Id);
 

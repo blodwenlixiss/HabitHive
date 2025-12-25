@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Enum;
 
-namespace Domain.Entity;
+namespace Application.Dto;
 
-public class Task
+public class TaskResponse
 {
     public Guid Id { get; set; }
 
@@ -19,8 +18,4 @@ public class Task
     public DateTime CompletedAt { get; set; }
 
     public DateTime CreatedAt { get; set; }
-    public required string UserId { get; set; }
-
-    
-    [ForeignKey("UserId")] public  ApplicationUser? ApplicationUser { get; set; }
 }

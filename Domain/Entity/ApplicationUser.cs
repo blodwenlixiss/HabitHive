@@ -13,7 +13,7 @@ public class ApplicationUser : IdentityUser
     
     public DateTime CreatedAt { get; set; }
 
-    public ICollection<Task>? Tasks { get; set; } = [];
+    public ICollection<UserTask>? Tasks { get; set; } = [];
     public ICollection<Hobby>? Hobbies { get; set; } = [];
     
     public ICollection<HobbyCompletion>? HobbyCompletions { get; set; } = [];

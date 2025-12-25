@@ -22,7 +22,7 @@ public class Notification
     [ForeignKey("UserId")] public ApplicationUser? User { get; set; }
     
     public Guid? TaskId { get; set; }
-    [ForeignKey("TaskId")] public Task? Task { get; set; }
+    [ForeignKey("TaskId")] public UserTask? Task { get; set; }
     
     public Guid? HobbyId { get; set; }
     [ForeignKey("HobbyId")] public Hobby? Hobby { get; set; }
