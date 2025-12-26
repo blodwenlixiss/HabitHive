@@ -31,14 +31,13 @@ public class HobbiesRepository : IHobbiesRepository
         return hobbies;
     }
 
-    public async Task<Hobby> GetHobbyByIdAsync(Guid hobbyId, string userId)
+    public async Task<Hobby?> GetHobbyByIdAsync(Guid hobbyId, string userId)
     {
         var hobby = await _hobbies
                         .Include(h => h.Completions)
                         .FirstOrDefaultAsync(h =>
                             h.Id == hobbyId &&
-                            h.UserId == userId)
-                    ?? throw new Exception();
+                            h.UserId == userId);
         return hobby;
     }
 

@@ -17,7 +17,7 @@ public class ErrorHandlingMiddleware : IMiddleware
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         var (statusCode, errorDetails) = exception switch
         {
@@ -26,7 +26,6 @@ public class ErrorHandlingMiddleware : IMiddleware
                 ErrorType = "Application error",
                 Message = globalEx.Message
             }),
-
             _ => (StatusCodes.Status500InternalServerError, new ErrorDetails
             {
                 ErrorType = "Server Error",

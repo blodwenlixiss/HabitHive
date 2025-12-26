@@ -11,5 +11,6 @@ public class GlobalException : Exception
 
     public GlobalException(string message) : base(message)
     {
+        
     }
 }

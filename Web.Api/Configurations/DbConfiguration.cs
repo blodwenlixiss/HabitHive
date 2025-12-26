@@ -7,6 +7,7 @@ using Infrastructure.Repository;
 using Infrastructure.UserState;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.Api.MiddleWare;
 
 namespace Web.Api.Configurations;
 
@@ -19,6 +20,8 @@ public static class DbConfiguration
             opt.UseSqlServer(configuration.GetConnectionString("ConnectionString")));
 
         services.AddDataProtection();
+
+        services.AddHttpContextAccessor();
 
         services
             .AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -50,9 +53,11 @@ public static class DbConfiguration
         services.AddScoped<ITasksRepository, TasksRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IHobbyService,HobbyService>();
+        services.AddScoped<IHobbyService, HobbyService>();
         services.AddScoped<ITasksService, TasksService>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddTransient<ErrorHandlingMiddleware>();
+
 
         return services;
     }

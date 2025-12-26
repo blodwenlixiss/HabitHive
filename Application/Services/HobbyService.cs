@@ -38,11 +38,12 @@ public class HobbyService : IHobbyService
     public async Task<HobbyResponse> GetUserHobbyByIdAsync(Guid hobbyId)
     {
         var currentUser = _unityOfWork.UserState.GetCurrentUser();
-        var hobby = await _unityOfWork.HobbiesRepository.GetHobbyByIdAsync(hobbyId, currentUser.Id)
-                    ?? throw new GlobalException(ExceptionMessage.HobbyNotFound(hobbyId),
+        var hobby = await _unityOfWork.HobbiesRepository.GetHobbyByIdAsync(hobbyId, currentUser.Id) ??
+                    throw new GlobalException(ExceptionMessage.HobbyNotFound(hobbyId),
                         StatusCodes.Status404NotFound);
-        ;
+
         var hobbyResponse = hobby.ToHobbyResponseMapper();
+
         return hobbyResponse;
     }
 
