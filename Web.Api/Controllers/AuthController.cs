@@ -1,5 +1,6 @@
 using Application.Dto;
 using Application.IServices;
+using Domain.CostumExceptions;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using RegisterRequest = Application.Dto.RegisterRequest;
@@ -28,8 +29,13 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] AuthRequest authRequest)
     {
-        var result = await _authService.LoginAsync(authRequest);
+        var loginResult = await _authService.LoginAsync(authRequest);
 
+        var result = ResponseModel<object>.SuccessMessage(new
+        {
+            loginResult.AccessToken,
+            loginResult.RefreshToken
+        });
 
         return Ok(result);
     }

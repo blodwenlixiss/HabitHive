@@ -2,8 +2,10 @@ using System.Security.Cryptography;
 using Application.Dto;
 using Application.IServices;
 using Application.Mapper;
+using Domain.CostumExceptions;
 using Domain.Entity;
 using Domain.IRepository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Task = System.Threading.Tasks.Task;
 
@@ -36,7 +38,8 @@ public class AuthService : IAuthService
             .GetUserByEmailAsync(registerDto.Email);
         if (userExist != null)
         {
-            throw new Exception("User with this email already exists");
+            throw new GlobalException(ExceptionMessage.UserAlreadyExists(userExist.Id),
+                StatusCodes.Status400BadRequest);;
         }
         var result = await _userManager.CreateAsync(applicationUser, registerDto.Password);
     
@@ -50,8 +53,10 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> LoginAsync(AuthRequest loginDto)
     {
-        var applicationUser = await _unityOfWork.UserRepository.GetUserByEmailAsync(loginDto.Email);
-
+        var applicationUser = await _unityOfWork.UserRepository.GetUserByEmailAsync(loginDto.Email)??
+                              throw new GlobalException(ExceptionMessage.UserAlreadyExists(loginDto.Email),
+                                  StatusCodes.Status400BadRequest);;
+        
 
         var accessToken = await _jwtService.GenerateAccessToken(applicationUser);
         var refreshToken = _jwtService.GenerateRefreshToken();

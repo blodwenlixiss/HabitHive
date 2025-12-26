@@ -1,5 +1,6 @@
 using Application.Dto;
 using Application.IServices;
+using Domain.CostumExceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,9 @@ public class HobbyController : ControllerBase
     public async Task<IActionResult> CreateHobby([FromBody] HobbyRequest hobbyRequest)
     {
         await _hobbyService.CreateHobby(hobbyRequest);
-        return Ok("Hobby creatyed");
+        var result = ResponseModel<string>.SuccessMessage("Hobby Created");
+
+        return Ok(result);
     }
 
     [Authorize]
@@ -32,7 +35,9 @@ public class HobbyController : ControllerBase
     public async Task<IActionResult> GetHobbyList()
     {
         var hobbyList = await _hobbyService.GetAllUserHobby();
-        return Ok(hobbyList);
+        var result = ResponseModel<object>.SuccessMessage(hobbyList);
+
+        return Ok(result);
     }
 
     [Authorize]
@@ -40,7 +45,10 @@ public class HobbyController : ControllerBase
     public async Task<IActionResult> GetHobbyByUserId(Guid hobbyId)
     {
         var hobby = await _hobbyService.GetUserHobbyByIdAsync(hobbyId);
-        return Ok(hobby);
+        var result = ResponseModel<object>.SuccessMessage(hobby);
+
+
+        return Ok(result);
     }
 
     [Authorize]
@@ -48,6 +56,8 @@ public class HobbyController : ControllerBase
     public async Task<IActionResult> CompleteHobbyDaily(Guid hobbyId)
     {
         await _hobbyService.CompleteHobbyAsync(hobbyId);
-        return Ok("updated hobby");
+        var result = ResponseModel<string>.SuccessMessage("Streak Updated");
+
+        return Ok(result);
     }
 }

@@ -1,5 +1,6 @@
 using Application.Dto;
 using Application.IServices;
+using Domain.CostumExceptions;
 using Domain.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,8 @@ public class TaskController : ControllerBase
     {
         var tasks = await _taskService.GetAllTasksFromUserAsync();
 
-        return Ok(tasks);
+        var result = ResponseModel<object>.SuccessMessage(tasks);
+        return Ok(result);
     }
 
     /// <summary>
@@ -59,8 +61,9 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> CreateTaskForUser(Guid taskId)
     {
         var tasks = await _taskService.GetTaskByUserIdAsync(taskId);
+        var result = ResponseModel<object>.SuccessMessage(tasks);
 
-        return Ok(tasks);
+        return Ok(result);
     }
 
     [Authorize]
@@ -68,6 +71,8 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> DeleteTaskById(Guid taskId)
     {
         await _taskService.DeleteTaskByIdAsync(taskId);
-        return Ok("task has been deleted successfully");
+        var result = ResponseModel<string>.SuccessMessage("Task has been created successfully !");
+        
+        return Ok(result);
     }
 }

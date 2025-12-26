@@ -1,8 +1,10 @@
 using Application.Dto;
 using Application.IServices;
 using Application.Mapper;
+using Domain.CostumExceptions;
 using Domain.Entity;
 using Domain.IRepository;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Services;
 
@@ -31,6 +33,7 @@ public class TasksService : ITasksService
         var currentUser = _unityOfWork.UserState.GetCurrentUser();
         var taskList = await _unityOfWork.TasksRepository
             .GetUserTasksAsync(currentUser.Id);
+
         var tasks = taskList.ToUserTaskResponseMapper();
 
         return tasks;
@@ -39,9 +42,11 @@ public class TasksService : ITasksService
     public async Task<TaskResponse> GetTaskByUserIdAsync(Guid taskId)
     {
         var currentUser = _unityOfWork.UserState.GetCurrentUser();
-        var taskResponse = await _unityOfWork.TasksRepository.GetUserTaskByIdAsync(taskId, currentUser.Id);
+        var taskResponse = await _unityOfWork.TasksRepository.GetUserTaskByIdAsync(taskId, currentUser.Id)
+                           ?? throw new GlobalException(ExceptionMessage.TaskNotFound(taskId),
+                               StatusCodes.Status404NotFound);
 
-        var task = taskResponse.ToUserTaskResponseMapper() ?? throw new Exception();
+        var task = taskResponse.ToUserTaskResponseMapper();
 
         return task;
     }
@@ -51,7 +56,8 @@ public class TasksService : ITasksService
         var currentUser = _unityOfWork.UserState.GetCurrentUser();
         var task = await _unityOfWork.TasksRepository
                        .GetUserTaskByIdAsync(taskId, currentUser.Id) ??
-                   throw new Exception();
+                   throw new GlobalException(ExceptionMessage.TaskNotFound(taskId),
+                       StatusCodes.Status404NotFound);;
 
         await _unityOfWork.TasksRepository.DeleteTaskByIdAsync(task);
         await _unityOfWork.SaveChangesAsync();

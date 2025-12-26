@@ -1,9 +1,10 @@
-using System.Runtime.InteropServices.JavaScript;
 using Application.Dto;
 using Application.IServices;
 using Application.Mapper;
+using Domain.CostumExceptions;
 using Domain.Entity;
 using Domain.IRepository;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Services;
 
@@ -37,7 +38,10 @@ public class HobbyService : IHobbyService
     public async Task<HobbyResponse> GetUserHobbyByIdAsync(Guid hobbyId)
     {
         var currentUser = _unityOfWork.UserState.GetCurrentUser();
-        var hobby = await _unityOfWork.HobbiesRepository.GetHobbyByIdAsync(hobbyId, currentUser.Id);
+        var hobby = await _unityOfWork.HobbiesRepository.GetHobbyByIdAsync(hobbyId, currentUser.Id)
+                    ?? throw new GlobalException(ExceptionMessage.HobbyNotFound(hobbyId),
+                        StatusCodes.Status404NotFound);
+        ;
         var hobbyResponse = hobby.ToHobbyResponseMapper();
         return hobbyResponse;
     }
@@ -46,13 +50,17 @@ public class HobbyService : IHobbyService
     {
         var currentUser = _unityOfWork.UserState.GetCurrentUser();
         var today = DateTime.Today;
-        var hobby = await _unityOfWork.HobbiesRepository.GetHobbyByIdAsync(hobbyId, currentUser.Id);
-        var alreadyCompelted = await _unityOfWork.HobbiesRepository.IsHobbyCompletedAsync(hobbyId, currentUser.Id, today);
+        var hobby = await _unityOfWork.HobbiesRepository.GetHobbyByIdAsync(hobbyId, currentUser.Id)
+                    ?? throw new GlobalException(ExceptionMessage.HobbyNotFound(hobbyId),
+                        StatusCodes.Status404NotFound);
+        var alreadyCompelted =
+            await _unityOfWork.HobbiesRepository.IsHobbyCompletedAsync(hobbyId, currentUser.Id, today);
 
 
         if (alreadyCompelted)
         {
-            throw new Exception();
+            throw new GlobalException(ExceptionMessage.HobbyAlreadyCompletedToday(hobbyId),
+                StatusCodes.Status400BadRequest);
         }
 
         var completion = new HobbyCompletion
