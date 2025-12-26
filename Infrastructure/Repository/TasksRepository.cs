@@ -36,4 +36,10 @@ public class TasksRepository : ITasksRepository
 
         return Task.FromResult(task);
     }
+
+    public Task DeleteTaskByIdAsync(UserTask task)
+    {
+        _tasks.Remove(task);
+        return Task.FromResult(task);
+    }
 }

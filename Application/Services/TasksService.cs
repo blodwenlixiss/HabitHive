@@ -45,4 +45,15 @@ public class TasksService : ITasksService
 
         return task;
     }
+
+    public async Task DeleteTaskByIdAsync(Guid taskId)
+    {
+        var currentUser = _unityOfWork.UserState.GetCurrentUser();
+        var task = await _unityOfWork.TasksRepository
+                       .GetUserTaskByIdAsync(taskId, currentUser.Id) ??
+                   throw new Exception();
+
+        await _unityOfWork.TasksRepository.DeleteTaskByIdAsync(task);
+        await _unityOfWork.SaveChangesAsync();
+    }
 }

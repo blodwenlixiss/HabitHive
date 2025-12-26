@@ -20,7 +20,6 @@ public static class DbConfiguration
 
         services.AddDataProtection();
 
-        // Register Identity with proper role store
         services
             .AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -45,13 +44,15 @@ public static class DbConfiguration
                 .AllowAnyOrigin();
         }));
 
-        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnityOfWork, UnityOfWork>();
-        services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<ITasksService, TasksService>();
-        services.AddScoped<ITasksRepository, TasksRepository>();
         services.AddScoped<IUserState, UserState>();
+        services.AddScoped<IHobbiesRepository, HobbiesRepository>();
+        services.AddScoped<ITasksRepository, TasksRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IHobbyService,HobbyService>();
+        services.AddScoped<ITasksService, TasksService>();
+        services.AddScoped<IJwtService, JwtService>();
 
         return services;
     }

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Application.Mapper;
 using Domain.Entity;
 using Domain.Enum;
@@ -10,7 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services
     .AddDbConfiguration(builder.Configuration)
-    .AddSwaggerGen();
+    .AddSwaggerGen(opt =>
+    {
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        opt.IncludeXmlComments(xmlPath);
+    });
 builder.Services.AddAuthConfiguration(builder.Configuration);
 
 
@@ -30,9 +36,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseStaticFiles();
 app.UseCors("All");
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c => { c.InjectStylesheet("/swagger-custom.css"); });
 
 app.UseHttpsRedirection();
 

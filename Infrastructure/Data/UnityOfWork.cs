@@ -11,12 +11,14 @@ public class UnityOfWork : IUnityOfWork
         AppDbContext context,
         IUserRepository userRepository,
         ITasksRepository taskRepository,
+        IHobbiesRepository hobbiesRepository,
         IUserState userState
     )
     {
         _context = context;
         UserRepository = userRepository;
         TasksRepository = taskRepository;
+        HobbiesRepository = hobbiesRepository;
         UserState = userState;
     }
 
@@ -24,6 +26,8 @@ public class UnityOfWork : IUnityOfWork
     public IUserRepository UserRepository { get; }
     public ITasksRepository TasksRepository { get; }
     public IUserState UserState { get; }
+
+    public IHobbiesRepository HobbiesRepository { get; }
 
     public async Task SaveChangesAsync()
     {

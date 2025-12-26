@@ -7,4 +7,5 @@ public class HobbyRequest
     public required string Title { get; set; }
     public string? Description { get; set; }
     public HabitFrequencyEnum Frequency { get; set; }
+
 }
